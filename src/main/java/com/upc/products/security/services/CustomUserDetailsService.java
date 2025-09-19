@@ -1,6 +1,4 @@
 package com.upc.products.security.services;
-
-
 import com.upc.products.security.entities.User;
 import com.upc.products.security.repositories.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,12 +10,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-
 /**
- * Custom implementation of UserDetailsService to load user-specific data.
- * This service retrieves user information from the UserRepository and converts it into a UserDetails object.
- * It is used by Spring Security to authenticate users and manage their roles.
- * UserDetailsService es una interfaz fundamental en Spring Security para la autenticación de usuarios.
+ * Busca al usuario en la BD por su username.
+ * Si no existe → lanza excepción.
+ * Convierte sus roles en GrantedAuthority.
+ * Devuelve un UserDetails que Spring Security usará para:
+ * - Verificar la contraseña al hacer login.
+ * - Saber qué roles/authorities tiene para autorización (@PreAuthorize, .hasRole(), etc.).
+ * ------------------
  * Su propósito principal es cargar los detalles de un usuario a partir de un identificador,
  * que generalmente es el nombre de usuario (username).
  * Es usado por JwtRequestFilter
