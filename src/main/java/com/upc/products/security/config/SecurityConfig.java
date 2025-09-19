@@ -53,8 +53,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/authenticate").permitAll()
                         //.requestMatchers("/api/proveedores").hasRole("ADMIN")
-                        .anyRequest().authenticated() //los que tienen @PreAuthorize pueden ser llamados con tan solo autenticarse
-                        //.anyRequest().denyAll() // aquí se obliga a todos los endpoints usar @PreAuthorize
+                        .anyRequest().authenticated() // cualquier endpoint puede ser llamado con tan solo autenticarse
+                        //.anyRequest().denyAll() // aquí se obliga a todos los endpoints usen @PreAuthorize
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
