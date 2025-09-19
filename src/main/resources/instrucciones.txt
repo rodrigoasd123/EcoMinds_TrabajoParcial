@@ -1,3 +1,5 @@
+https://bcrypt-generator.com/
+
 opcional:
 
 import org.springframework.context.annotation.Configuration;
