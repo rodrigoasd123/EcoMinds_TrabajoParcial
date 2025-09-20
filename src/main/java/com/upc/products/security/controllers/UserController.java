@@ -1,5 +1,6 @@
 package com.upc.products.security.controllers;
 
+import com.upc.products.security.entities.Role;
 import com.upc.products.security.entities.User;
 import com.upc.products.security.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,13 @@ public class UserController {
         user.setPassword(bcryptPassword);
         userService.save(user);
     }
+
+    @PostMapping("/rol")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void createRol(@RequestBody Role rol) {
+           userService.grabar(rol);
+    }
+
 
     @PostMapping("/save/{user_id}/{rol_id}")
     @PreAuthorize("hasRole('ADMIN')")

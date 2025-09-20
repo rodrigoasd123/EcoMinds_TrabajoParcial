@@ -28,7 +28,7 @@ public class ProveedorController {
     @Autowired
     private ProveedorService proveedorService;
 
-    @GetMapping("/proveedores")
+    @GetMapping("/proveedores") //EndPoint
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ProveedorDTO>> listaProveedores() {
        return ResponseEntity.ok(proveedorService.listar());
