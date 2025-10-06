@@ -125,7 +125,7 @@ public class RecoleccionController {
         }
     }
 
-    // Endpoint para obtener el formato JSON
+
     @GetMapping("/formato-registro")
     public ResponseEntity<Map<String, Object>> obtenerFormatoRegistro() {
         Map<String, Object> formato = new HashMap<>();

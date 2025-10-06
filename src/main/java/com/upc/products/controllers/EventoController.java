@@ -46,7 +46,7 @@ public class EventoController {
         try {
             List<Evento> eventos = eventoRepository.findAllByOrderByFechaAscHoraAsc();
 
-            // Convertir eventos a formato limpio sin problemas de serialización
+            
             List<Map<String, Object>> eventosData = eventos.stream().map(evento -> {
                 Map<String, Object> eventoData = new HashMap<>();
                 eventoData.put("id", evento.getIdEvento());
@@ -242,7 +242,7 @@ public class EventoController {
         }
     }
 
-    // US-011: Eliminar evento (ORGANIZADOR propietario)
+    // US-011: Eliminar evento
     @DeleteMapping("/evento/{id}")
     @PreAuthorize("hasRole('ORGANIZADOR')")
     public ResponseEntity<Map<String, String>> eliminarEvento(@PathVariable Long id) {
@@ -252,9 +252,9 @@ public class EventoController {
             Optional<Evento> optionalEvento = eventoRepository.findById(id);
             if (optionalEvento.isPresent()) {
                 Evento evento = optionalEvento.get();
-                // Primero eliminar inscripciones
+
                 usuarioEventoRepository.deleteByEvento(evento);
-                // Luego eliminar evento
+                //  eliminar evento
                 eventoRepository.deleteById(id);
                 response.put("success", "true");
                 response.put("message", "Evento eliminado exitosamente");
