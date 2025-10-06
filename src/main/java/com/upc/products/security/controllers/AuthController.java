@@ -26,10 +26,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 //@CrossOrigin(origins = "${ip.frontend}")
-@CrossOrigin(origins = "${ip.frontend}", allowCredentials = "true", exposedHeaders = "Authorization") //para cloud
-//@CrossOrigin(origins = "*", allowedHeaders = "*", exposedHeaders = "Authorization")
+@CrossOrigin(origins = "*", allowedHeaders = "*", exposedHeaders = "Authorization")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -50,7 +49,8 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping("/authenticate")
+    // US-007: Iniciar sesión en la aplicación
+    @PostMapping({"/authenticate", "/login"})
     public ResponseEntity<AuthResponseDTO> createAuthenticationToken(@RequestBody AuthRequestDTO authRequest) throws Exception {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())

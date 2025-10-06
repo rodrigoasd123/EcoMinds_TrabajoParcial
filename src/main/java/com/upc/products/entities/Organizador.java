@@ -9,7 +9,7 @@ public class Organizador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_organizador")
-    private Long idOrganizador;
+    private Long id;
 
     @Column(nullable = false)
     private String nombre;
@@ -22,12 +22,12 @@ public class Organizador {
     }
 
     // Getters y Setters
-    public Long getIdOrganizador() {
-        return idOrganizador;
+    public Long getId() {
+        return id;
     }
 
-    public void setIdOrganizador(Long idOrganizador) {
-        this.idOrganizador = idOrganizador;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNombre() {

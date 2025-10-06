@@ -30,5 +30,13 @@ public class UserService {
         userRepository.insertUserRol(user_id, rol_id);
         return 1;
     }
+    
+    public java.util.List<User> findAll() {
+        return userRepository.findAll();
+    }
+    
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElse(null);
+    }
 
 }

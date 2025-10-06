@@ -42,24 +42,38 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            username = jwtUtil.extractUsername(jwt);
-            System.out.println("USERNAME:" + username);
+            try {
+                username = jwtUtil.extractUsername(jwt);
+                System.out.println("USERNAME:" + username);
+            } catch (Exception e) {
+                System.out.println("Error extracting username from token: " + e.getMessage());
+                // Si hay error al extraer el username, continúa sin autenticar
+                chain.doFilter(request, response);
+                return;
+            }
         }
 
         // Este es el punto clave donde se verifica si el token JWT es válido y se establece
         // la autenticación del usuario en el contexto de seguridad de Spring Security.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            try {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-            if (jwtUtil.validateToken(jwt, userDetails)) {
-
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                //siempre por ser stateless, se debe establecer el contexto de seguridad
+                if (jwtUtil.validateToken(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken
+                            .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    //siempre por ser stateless, se debe establecer el contexto de seguridad
+                }
+            } catch (org.springframework.security.core.userdetails.UsernameNotFoundException e) {
+                System.out.println("Usuario no encontrado: " + username + ". Token inválido o usuario eliminado.");
+                // No establecer autenticación, continuar sin usuario autenticado
+                // Esto permite que endpoints públicos sigan funcionando
+            } catch (Exception e) {
+                System.out.println("Error during authentication: " + e.getMessage());
+                // No establecer autenticación en caso de cualquier otro error
             }
         }
         chain.doFilter(request, response);//ya va al controller o al siguiente filtro en la cadena

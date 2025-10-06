@@ -1,9 +1,18 @@
 package com.upc.products.security.dtos;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.util.Set;
 
-@lombok.Data
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuthResponseDTO {
     private String jwt;
     private Set<String> roles;

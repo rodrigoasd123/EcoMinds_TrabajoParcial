@@ -51,4 +51,23 @@ public class UsuarioEvento {
     public void setEvento(Evento evento) {
         this.evento = evento;
     }
+
+    // Métodos de conveniencia para trabajar con IDs
+    public Long getIdUsuario() {
+        return this.usuario != null ? this.usuario.getId() : null;
+    }
+
+    public void setIdUsuario(Long idUsuario) {
+        // Este método será usado por el controller, pero necesitamos manejarlo apropiadamente
+        // Nota: En un caso real, se debería cargar el User completo desde la base de datos
+    }
+
+    public Long getIdEvento() {
+        return this.evento != null ? this.evento.getIdEvento() : null;
+    }
+
+    public void setIdEvento(Long idEvento) {
+        // Este método será usado por el controller, pero necesitamos manejarlo apropiadamente
+        // Nota: En un caso real, se debería cargar el Evento completo desde la base de datos
+    }
 }

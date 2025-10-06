@@ -51,32 +51,41 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // deshabilitar CSRF ya que no es necesario para una API REST
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/authenticate").permitAll()
-                        //.requestMatchers("/api/proveedores").hasRole("ADMIN")
+                        .requestMatchers("/api/auth/login", "/api/auth/authenticate", "/api/auth/register").permitAll()
+                        .requestMatchers("/api/test/public").permitAll()
+                        .requestMatchers("/api/eventos").permitAll() // Permitir GET público a eventos
+                        .requestMatchers("/api/evento/{id}").permitAll() // Permitir GET público a evento específico
+                        .requestMatchers("/api/admin/test").hasRole("ADMIN")
+                        .requestMatchers("/api/recolecciones/**").hasAnyRole("USER", "ORGANIZADOR", "ADMIN")
+                        .requestMatchers("/api/materiales/**").hasAnyRole("USER", "ORGANIZADOR", "ADMIN")
+                        .requestMatchers("/api/puntos-acopio/**").hasAnyRole("USER", "ORGANIZADOR", "ADMIN")
+                        .requestMatchers("/api/recompensas/**").hasAnyRole("USER", "ORGANIZADOR", "ADMIN")
+                        .requestMatchers("/api/canjes/**").hasAnyRole("USER", "ORGANIZADOR", "ADMIN")
+                        .requestMatchers("/api/usuarios/**").hasAnyRole("USER", "ORGANIZADOR", "ADMIN")
                         .anyRequest().authenticated() // cualquier endpoint puede ser llamado con tan solo autenticarse
-                        //.anyRequest().denyAll() // aquí se obliga a todos los endpoints usen @PreAuthorize
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
 
-        // Añadir el filtro JWT antes del filtro de autenticación
+        // Añadir filtros en orden: CORS -> JWT -> Authentication
+        http.addFilterBefore(corsFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    //Filter opcional si se desea configurar globalmente el acceso a los endpoints sin anotaciones
-    // en cada endpoint
-//    @Bean
-//    public CorsFilter corsFilter() {
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowCredentials(true);
-//        config.addAllowedOrigin("${ip.frontend}");
-//        config.addAllowedMethod("*");
-//        config.addExposedHeader("Authorization");
-//        source.registerCorsConfiguration("/**", config); //para todos los paths
-//        return new CorsFilter(source);
-//    }
+    // Configuración CORS para permitir peticiones desde frontend
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("*"); // Permitir cualquier origen en desarrollo
+        config.addAllowedMethod("*"); // Permitir todos los métodos HTTP
+        config.addAllowedHeader("*"); // Permitir todos los headers
+        config.addExposedHeader("Authorization");
+        source.registerCorsConfiguration("/**", config); // Para todos los paths
+        return new CorsFilter(source);
+    }
 }
