@@ -1,4 +1,4 @@
-¡Listo! Ya creé el patrón ServiceImpl completo para tu sistema de reciclaje:
+
 
 ## **✅ ARCHIVOS SERVICEIMPL CREADOS:**
 
