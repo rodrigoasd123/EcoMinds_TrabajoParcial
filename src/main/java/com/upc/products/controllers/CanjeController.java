@@ -24,7 +24,6 @@ public class CanjeController {
     @Autowired
     private UserRepository userRepository;
 
-    // US-006: Canjear recompensas (USER autenticado)
     @PostMapping("/canjear/{recompensaId}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Map<String, Object>> canjearRecompensa(
@@ -33,7 +32,7 @@ public class CanjeController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            // Obtener usuario autenticado
+           
             String username = authentication.getName();
             User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -71,7 +70,7 @@ public class CanjeController {
             return ResponseEntity.badRequest().body(response);
         }
     }
-
+//parte jorge hecha 
     // Verificar puntos disponibles del usuario
     @GetMapping("/mis-puntos")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
