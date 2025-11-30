@@ -1,0 +1,148 @@
+.detail-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.detail-card {
+  background-color: var(--bg-white);
+  border-radius: 16px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: var(--bg-gray-light);
+  border-radius: 50%;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.close-btn:hover {
+  background-color: var(--error);
+  color: var(--text-white);
+}
+
+.detail-content {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 2rem;
+  padding: 2.5rem;
+}
+
+.detail-image {
+  background-color: var(--bg-gray-light);
+  border-radius: 12px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.detail-info h2 {
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-right: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.badge-disponible {
+  background-color: var(--primary-green-light);
+  color: var(--primary-green);
+}
+
+.badge-stock {
+  background-color: var(--accent-teal);
+  color: var(--text-white);
+}
+
+.detail-info p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.detail-specs {
+  background-color: var(--bg-gray-light);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.spec-item {
+  padding: 0.5rem 0;
+  color: var(--text-secondary);
+}
+
+.spec-item strong {
+  color: var(--text-primary);
+}
+
+.stock-indicator {
+  margin-bottom: 1.5rem;
+}
+
+.stock-indicator label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.detail-actions {
+  margin-bottom: 1rem;
+}
+
+.detail-actions .btn {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.detail-note {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .detail-content {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+  }
+}

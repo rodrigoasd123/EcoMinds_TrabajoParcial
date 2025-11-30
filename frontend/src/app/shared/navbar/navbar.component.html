@@ -1,0 +1,53 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <div class="navbar-logo">
+      <span class="logo-icon">🌿</span>
+      <span class="navbar-brand" routerLink="/">EcoMinds</span>
+    </div>
+    
+    <ul class="navbar-menu">
+      <li class="navbar-item">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="navbar-link">Home</a>
+      </li>
+      <li class="navbar-item">
+        <a routerLink="/puntos-acopio" routerLinkActive="active" class="navbar-link">Puntos de Acopio</a>
+      </li>
+      <li class="navbar-item">
+        <a routerLink="/recompensas" routerLinkActive="active" class="navbar-link">Recompensas</a>
+      </li>
+      <li class="navbar-item">
+        <a routerLink="/eventos" routerLinkActive="active" class="navbar-link">Eventos</a>
+      </li>
+    </ul>
+    
+    <div class="navbar-actions">
+      <button class="btn btn-primary" routerLink="/programar-recoleccion">Registrar recolección →</button>
+
+      <!-- Menú de usuario -->
+      <div class="user-menu" *ngIf="isLoggedIn">
+        <button class="user-button" (click)="toggleUserMenu()">
+          <span class="user-icon">👤</span>
+          <span class="user-name">{{ username }}</span>
+          <span class="user-points">{{ puntos }} pts</span>
+        </button>
+
+        <div class="user-dropdown" *ngIf="showUserMenu">
+          <div class="dropdown-header">
+            <p class="dropdown-username">{{ username }}</p>
+            <p class="dropdown-points">Puntos: {{ puntos }}</p>
+          </div>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" (click)="cerrarSesion()">
+            <span>🚪</span> Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-toggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</nav>

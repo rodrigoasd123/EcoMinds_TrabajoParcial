@@ -1,0 +1,179 @@
+<app-navbar></app-navbar>
+
+<section class="recompensas-header">
+  <div class="container">
+    <h1>Catálogo de Recompensas</h1>
+    <p>Canjea tus puntos por productos y experiencias sostenibles</p>
+
+    <!-- Botón para crear recompensa (solo ADMIN) -->
+    <div *ngIf="isAdmin" style="text-align: center; margin-top: 1rem;">
+      <button class="btn btn-primary" type="button" (click)="crearRecompensa()">
+        Crear Nueva Recompensa
+      </button>
+    </div>
+
+    <div class="filter-section">
+      <!-- Filtros de ordenamiento por puntos -->
+      <div class="sort-buttons" style="display: flex; gap: 0.5rem;">
+        <button
+          class="filter-tab"
+          type="button"
+          [class.active]="ordenamiento === 'desc'"
+          (click)="ordenarPorPuntos('desc')"
+          title="Ordenar de mayor a menor puntos">
+          Mayor a Menor
+        </button>
+        <button
+          class="filter-tab"
+          type="button"
+          [class.active]="ordenamiento === 'asc'"
+          (click)="ordenarPorPuntos('asc')"
+          title="Ordenar de menor a mayor puntos">
+          Menor a Mayor
+        </button>
+      </div>
+
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Buscar..."
+          class="search-input"
+          (input)="buscar($event)">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="recompensas-grid-section">
+  <div class="container">
+    <!-- Mensaje cuando no hay resultados -->
+    <div *ngIf="recompensasFiltradas.length === 0" style="text-align: center; padding: 3rem 0;">
+      <p style="font-size: 1.2rem; color: var(--text-secondary);">
+        No se encontraron recompensas
+      </p>
+    </div>
+
+    <!-- Grid de recompensas -->
+    <div class="recompensas-grid">
+      <div class="recompensa-card" *ngFor="let recompensa of recompensasFiltradas">
+        <div class="recompensa-image">
+          <div class="recompensa-icon">🎁</div>
+          <span class="puntos-badge">{{ recompensa.puntosRequeridos }} pts</span>
+        </div>
+        <div class="recompensa-info">
+          <h3>{{ recompensa.nombre }}</h3>
+          <p>{{ recompensa.descripcion }}</p>
+
+          <!-- Botones según el rol del usuario -->
+          <div *ngIf="isAdmin" style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+            <!-- Administrador: botones editar y eliminar -->
+            <button
+              class="btn btn-primary"
+              type="button"
+              style="flex: 1;"
+              (click)="editarRecompensa(recompensa)">
+              Editar
+            </button>
+            <button
+              class="btn btn-danger"
+              type="button"
+              style="flex: 1; background-color: #dc3545; border-color: #dc3545;"
+              (click)="eliminarRecompensa(recompensa.idRecompensa!, recompensa.nombre)">
+              Eliminar
+            </button>
+          </div>
+
+          <!-- Botón de canje para usuarios normales -->
+          <div *ngIf="!isAdmin" style="margin-top: 1rem;">
+            <button
+              class="btn btn-canjear"
+              type="button"
+              [disabled]="!puedeCanjear(recompensa.puntosRequeridos)"
+              (click)="abrirModalCanje(recompensa)">
+              {{ puedeCanjear(recompensa.puntosRequeridos) ? 'Canjear' : 'Puntos insuficientes' }}
+            </button>
+            <p *ngIf="!puedeCanjear(recompensa.puntosRequeridos)"
+               style="font-size: 0.8rem; color: #e74c3c; margin-top: 0.5rem; text-align: center;">
+              Te faltan {{ recompensa.puntosRequeridos - puntosUsuario }} puntos
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de canje de recompensa -->
+<div class="modal-overlay" *ngIf="showCanjeModal" (click)="cerrarModalCanje()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Confirmar Canje</h2>
+      <button class="modal-close" type="button" (click)="cerrarModalCanje()">&times;</button>
+    </div>
+
+    <div class="modal-body" *ngIf="recompensaSeleccionada">
+      <div class="recompensa-preview">
+        <div class="preview-icon">🎁</div>
+        <h3>{{ recompensaSeleccionada.nombre }}</h3>
+        <p class="preview-description">{{ recompensaSeleccionada.descripcion }}</p>
+        <p class="preview-puntos">
+          <strong>Costo:</strong> {{ recompensaSeleccionada.puntosRequeridos }} puntos
+        </p>
+      </div>
+
+      <div class="puntos-section">
+        <h4>Selecciona el punto de recogida:</h4>
+
+        <div *ngIf="loadingPuntos" class="loading-puntos">
+          <p>Cargando puntos de acopio...</p>
+        </div>
+
+        <div *ngIf="!loadingPuntos && puntosAcopio.length === 0" class="no-puntos">
+          <p>⚠️ No hay puntos de acopio disponibles en este momento</p>
+        </div>
+
+        <div class="puntos-list" *ngIf="!loadingPuntos && puntosAcopio.length > 0">
+          <div
+            *ngFor="let punto of puntosAcopio"
+            class="punto-item"
+            [class.selected]="puntoSeleccionado === punto.idAcopio"
+            (click)="seleccionarPunto(punto.idAcopio!)">
+            <div class="punto-radio">
+              <span class="radio-circle" [class.checked]="puntoSeleccionado === punto.idAcopio">
+                <span class="radio-inner" *ngIf="puntoSeleccionado === punto.idAcopio"></span>
+              </span>
+            </div>
+            <div class="punto-info">
+              <h5>{{ punto.nombre }}</h5>
+              <p>📍 {{ punto.ubicacion }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <p><strong>📝 Importante:</strong></p>
+        <p>Una vez confirmado el canje, podrás recoger tu recompensa en el punto seleccionado presentando tu documento de identidad. Los puntos serán descontados de tu cuenta inmediatamente.</p>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button
+        class="btn btn-secondary"
+        type="button"
+        (click)="cerrarModalCanje()"
+        [disabled]="canjeoEnProceso[recompensaSeleccionada?.idRecompensa!]">
+        Cancelar
+      </button>
+      <button
+        class="btn btn-primary"
+        type="button"
+        (click)="confirmarCanje()"
+        [disabled]="!puntoSeleccionado || canjeoEnProceso[recompensaSeleccionada?.idRecompensa!]">
+        {{ canjeoEnProceso[recompensaSeleccionada?.idRecompensa!] ? 'Canjeando...' : 'Confirmar Canje' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

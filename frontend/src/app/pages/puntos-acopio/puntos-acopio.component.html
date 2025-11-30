@@ -1,0 +1,85 @@
+<app-navbar></app-navbar>
+
+<section class="puntos-header">
+  <div class="header-overlay">
+    <div class="container">
+      <h1>Puntos de Acopio en Lima Metropolitana</h1>
+      <p class="header-subtitle">Descubre los centros de reciclaje más cercanos y contribuye al cuidado del medio ambiente</p>
+      <p class="header-description">Encuentra puntos de acopio en playas, ríos y viveros de toda la ciudad</p>
+      
+      <button *ngIf="isAdmin" mat-raised-button color="primary" (click)="abrirDialogoCrear()" class="btn-create">
+        Crear Nuevo Punto de Acopio
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="puntos-grid-section">
+  <div class="container">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Cargando puntos de acopio...</p>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && puntosAcopio.length === 0" class="empty-container">
+      <h3>No hay puntos de acopio disponibles</h3>
+      <p>Sé el primero en agregar un punto de acopio a la plataforma</p>
+      <button *ngIf="isAdmin" mat-raised-button color="primary" (click)="abrirDialogoCrear()">
+        Crear Punto de Acopio
+      </button>
+    </div>
+
+    <!-- Points Grid -->
+    <div *ngIf="!loading && puntosAcopio.length > 0" class="puntos-grid">
+      <div *ngFor="let punto of puntosAcopio" class="punto-card" (contextmenu)="$event.preventDefault()">
+        
+        <div class="card-header">
+          <div class="punto-info">
+            <h3 class="punto-title">{{ punto.nombre }}</h3>
+            <span class="punto-badge">Punto de Reciclaje</span>
+          </div>
+          <div *ngIf="isAdmin" class="action-buttons">
+            <button mat-button class="edit-btn" (click)="abrirDialogoEditar(punto)">
+              Editar
+            </button>
+            <button mat-button class="delete-btn" (click)="eliminarPunto(punto)">
+              Eliminar
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <p class="punto-location">{{ punto.ubicacion }}</p>
+        </div>
+
+        <div class="card-footer">
+          <button mat-raised-button color="primary" (click)="verEnMapa(punto.ubicacion)" class="map-btn">
+            Ver en Google Maps
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Section -->
+    <div *ngIf="!loading && puntosAcopio.length > 0" class="info-section">
+      <div class="info-card">
+        <h3>{{ puntosAcopio.length }}</h3>
+        <p>Puntos de Acopio Disponibles</p>
+      </div>
+      <div class="info-card">
+        <h3>100%</h3>
+        <p>Compromiso Ecológico</p>
+      </div>
+      <div class="info-card">
+        <h3>1000+</h3>
+        <p>Recicladores Activos</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-footer></app-footer>

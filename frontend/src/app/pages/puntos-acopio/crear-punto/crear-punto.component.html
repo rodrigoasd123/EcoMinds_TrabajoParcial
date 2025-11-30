@@ -1,0 +1,56 @@
+<app-navbar></app-navbar>
+
+<section class="crear-punto-section">
+  <div class="container">
+    <div class="form-card">
+      <div class="form-header">
+        <h1>{{ modoEdicion ? 'Editar Punto de Acopio' : 'Crear Nuevo Punto de Acopio' }}</h1>
+        <p class="subtitle">{{ modoEdicion ? 'Actualiza los datos del centro de reciclaje' : 'Registra los datos del nuevo centro de reciclaje' }}</p>
+      </div>
+
+      <form [formGroup]="puntoForm" class="punto-form">
+        <div class="form-group">
+          <label for="nombre">Nombre del Punto de Acopio</label>
+          <input type="text"
+                 id="nombre"
+                 formControlName="nombre"
+                 class="form-input"
+                 placeholder="Ej: Centro de Acopio Miraflores"
+                 required>
+          <div class="error-message" *ngIf="puntoForm.get('nombre')?.invalid && puntoForm.get('nombre')?.touched">
+            <span *ngIf="puntoForm.get('nombre')?.hasError('required')">El nombre es requerido</span>
+            <span *ngIf="puntoForm.get('nombre')?.hasError('minlength')">El nombre debe tener al menos 3 caracteres</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="ubicacion">Ubicación / Dirección</label>
+          <textarea id="ubicacion"
+                    formControlName="ubicacion"
+                    class="form-textarea"
+                    rows="4"
+                    placeholder="Ej: Av. Larco 1301, Miraflores, Lima"
+                    required></textarea>
+          <div class="error-message" *ngIf="puntoForm.get('ubicacion')?.invalid && puntoForm.get('ubicacion')?.touched">
+            <span *ngIf="puntoForm.get('ubicacion')?.hasError('required')">La ubicación es requerida</span>
+            <span *ngIf="puntoForm.get('ubicacion')?.hasError('minlength')">La ubicación debe tener al menos 5 caracteres</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" (click)="cancelar()" [disabled]="loading" class="btn-cancelar">
+            Cancelar
+          </button>
+          <button type="button"
+                  (click)="guardarPunto()"
+                  [disabled]="loading || puntoForm.invalid"
+                  class="btn-guardar">
+            {{ loading ? 'Guardando...' : (modoEdicion ? 'Actualizar' : 'Crear') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<app-footer></app-footer>

@@ -1,0 +1,96 @@
+<app-navbar></app-navbar>
+
+<section class="crear-evento-section">
+  <div class="container">
+    <div class="form-card">
+      <div class="form-header">
+        <h1>{{ isEditMode ? 'Editar Evento' : 'Crear Nuevo Evento' }}</h1>
+        <p class="subtitle">{{ isEditMode ? 'Actualiza los datos del evento' : 'Registra un nuevo evento para la comunidad' }}</p>
+      </div>
+
+      <form [formGroup]="eventoForm" class="evento-form">
+        <div class="form-group">
+          <label for="nombre">Nombre del Evento</label>
+          <input type="text"
+                 id="nombre"
+                 formControlName="nombre"
+                 class="form-input"
+                 placeholder="Ej: Jornada de Reforestación Urbana"
+                 required>
+          <div class="error-message" *ngIf="eventoForm.get('nombre')?.invalid && eventoForm.get('nombre')?.touched">
+            <span *ngIf="eventoForm.get('nombre')?.hasError('required')">El nombre es requerido</span>
+            <span *ngIf="eventoForm.get('nombre')?.hasError('minlength')">El nombre debe tener al menos 5 caracteres</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="descripcion">Descripción</label>
+          <textarea id="descripcion"
+                    formControlName="descripcion"
+                    class="form-textarea"
+                    rows="4"
+                    placeholder="Describe el evento y sus actividades"
+                    required></textarea>
+          <div class="error-message" *ngIf="eventoForm.get('descripcion')?.invalid && eventoForm.get('descripcion')?.touched">
+            <span *ngIf="eventoForm.get('descripcion')?.hasError('required')">La descripción es requerida</span>
+            <span *ngIf="eventoForm.get('descripcion')?.hasError('minlength')">La descripción debe tener al menos 20 caracteres</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label for="fecha">Fecha</label>
+            <input type="date"
+                   id="fecha"
+                   formControlName="fecha"
+                   class="form-input"
+                   required>
+            <div class="error-message" *ngIf="eventoForm.get('fecha')?.invalid && eventoForm.get('fecha')?.touched">
+              <span *ngIf="eventoForm.get('fecha')?.hasError('required')">La fecha es requerida</span>
+            </div>
+          </div>
+
+          <div class="form-group half-width">
+            <label for="hora">Hora</label>
+            <input type="time"
+                   id="hora"
+                   formControlName="hora"
+                   class="form-input"
+                   required>
+            <div class="error-message" *ngIf="eventoForm.get('hora')?.invalid && eventoForm.get('hora')?.touched">
+              <span *ngIf="eventoForm.get('hora')?.hasError('required')">La hora es requerida</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lugar">Lugar</label>
+          <input type="text"
+                 id="lugar"
+                 formControlName="lugar"
+                 class="form-input"
+                 placeholder="Ej: Parque Metropolitano del Sur"
+                 required>
+          <div class="error-message" *ngIf="eventoForm.get('lugar')?.invalid && eventoForm.get('lugar')?.touched">
+            <span *ngIf="eventoForm.get('lugar')?.hasError('required')">El lugar es requerido</span>
+            <span *ngIf="eventoForm.get('lugar')?.hasError('minlength')">El lugar debe tener al menos 5 caracteres</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" (click)="cancelar()" [disabled]="loading" class="btn-cancelar">
+            Cancelar
+          </button>
+          <button type="button"
+                  (click)="onSubmit()"
+                  [disabled]="loading || eventoForm.invalid"
+                  class="btn-guardar">
+            {{ loading ? 'Guardando...' : (isEditMode ? 'Actualizar' : 'Crear') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<app-footer></app-footer>

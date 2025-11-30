@@ -1,0 +1,77 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="logo-container">
+        <div class="logo-circle">E</div>
+      </div>
+      <h2>Bienvenido a EcoMinds</h2>
+      <p>Inicia sesión para comenzar tu viaje ecológico</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-group">
+        <label for="username">Usuario</label>
+        <input type="text"
+               id="username"
+               formControlName="username"
+               class="form-input"
+               placeholder="Ingresa tu usuario"
+               required
+               autocomplete="username">
+        <div class="error-message" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+          <span *ngIf="loginForm.get('username')?.hasError('required')">El usuario es requerido</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <div class="password-wrapper">
+          <input [type]="hidePassword ? 'password' : 'text'"
+                 id="password"
+                 formControlName="password"
+                 class="form-input"
+                 placeholder="••••••••"
+                 required
+                 autocomplete="current-password">
+          <button type="button" class="toggle-password" (click)="hidePassword = !hidePassword" tabindex="-1">
+            {{ hidePassword ? 'Ver' : 'Ocultar' }}
+          </button>
+        </div>
+        <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <span *ngIf="loginForm.get('password')?.hasError('required')">La contraseña es requerida</span>
+          <span *ngIf="loginForm.get('password')?.hasError('minlength')">La contraseña debe tener al menos 6 caracteres</span>
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="loading || loginForm.invalid" class="btn-submit">
+        {{ loading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+      </button>
+
+      <div class="test-credentials">
+        <div class="credentials-header">
+          <strong>Credenciales de prueba</strong>
+        </div>
+        <div class="credential-item">
+          <div class="role-badge admin-badge">Admin</div>
+          <div class="credential-info">
+            <code>admin</code> / <code>admin123</code>
+          </div>
+        </div>
+        <div class="credential-item">
+          <div class="role-badge user-badge">Usuario</div>
+          <div class="credential-info">
+            <code>usuario1</code> / <code>admin123</code>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="auth-footer">
+      <p>¿No tienes una cuenta? <a routerLink="/register" class="link-primary">Regístrate aquí</a></p>
+    </div>
+  </div>
+
+  <div class="auth-illustration">
+    <canvas #particleCanvas class="particle-canvas"></canvas>
+  </div>
+</div>

@@ -1,0 +1,139 @@
+<app-navbar></app-navbar>
+
+<section class="eventos-header">
+  <div class="container">
+    <h1>Eventos en Lima Metropolitana</h1>
+    <p>A continuación encontrarás una lista de los principales eventos de reciclaje y otros y sus alrededores. Encuentra todos ellos aquí (playa, ríos, parques).</p>
+
+    <!-- Botón para crear evento (solo ORGANIZADOR) -->
+    <div *ngIf="isOrganizador" class="crear-evento-container">
+      <button class="btn btn-crear-evento" type="button" (click)="crearEvento()">
+        <span class="btn-icon">➕</span>
+        Crear Nuevo Evento
+      </button>
+      <p class="organizador-info">Tienes permisos de organizador</p>
+    </div>
+  </div>
+</section>
+
+<section class="eventos-grid-section">
+  <div class="container">
+    <!-- Mensaje cuando no hay eventos -->
+    <div *ngIf="eventos.length === 0" class="no-eventos">
+      <p>No hay eventos disponibles en este momento</p>
+    </div>
+
+    <!-- Grid de eventos -->
+    <div class="eventos-grid">
+      <div class="evento-card" *ngFor="let evento of eventos">
+        <div class="evento-image">
+          <div class="evento-icon">🌱</div>
+          <span class="evento-type">Evento</span>
+        </div>
+        <div class="evento-info">
+          <h3>{{ evento.nombre }}</h3>
+          <p class="evento-description">{{ evento.descripcion }}</p>
+
+          <div class="evento-details">
+            <div class="detail-item">
+              <span class="detail-icon">📅</span>
+              <span>{{ formatearFecha(evento.fecha) }} a las {{ evento.hora }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">📍</span>
+              <span>{{ evento.lugar }}</span>
+            </div>
+            <div class="detail-item" *ngIf="evento.organizador">
+              <span class="detail-icon">👤</span>
+              <span>{{ evento.organizador.nombreOrganizador }}</span>
+            </div>
+          </div>
+
+          <!-- Botones según el rol del usuario -->
+          <div *ngIf="!isOrganizador">
+            <!-- Usuarios normales: botón inscribirse -->
+            <button
+              class="btn btn-primary btn-block"
+              type="button"
+              (click)="abrirModalInscripcion(evento)">
+              Inscribirse
+            </button>
+          </div>
+
+          <div *ngIf="isOrganizador" class="admin-buttons">
+            <!-- Organizador: botones editar y eliminar -->
+            <button
+              class="btn btn-primary"
+              type="button"
+              (click)="editarEvento(evento)">
+              Editar
+            </button>
+            <button
+              class="btn btn-danger"
+              type="button"
+              (click)="eliminarEvento(evento.idEvento!, evento.nombre)">
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de inscripción a evento -->
+<div class="modal-overlay" *ngIf="showInscripcionModal" (click)="cerrarModalInscripcion()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Confirmar Inscripción</h2>
+      <button class="modal-close" (click)="cerrarModalInscripcion()">&times;</button>
+    </div>
+
+    <div class="modal-body" *ngIf="eventoSeleccionado">
+      <div class="evento-preview">
+        <div class="preview-icon">🌱</div>
+        <h3>{{ eventoSeleccionado.nombre }}</h3>
+        <p class="preview-description">{{ eventoSeleccionado.descripcion }}</p>
+
+        <div class="preview-details">
+          <div class="preview-item">
+            <span class="preview-icon-small">📅</span>
+            <span>{{ formatearFecha(eventoSeleccionado.fecha) }} a las {{ eventoSeleccionado.hora }}</span>
+          </div>
+          <div class="preview-item">
+            <span class="preview-icon-small">📍</span>
+            <span>{{ eventoSeleccionado.lugar }}</span>
+          </div>
+          <div class="preview-item" *ngIf="eventoSeleccionado.organizador">
+            <span class="preview-icon-small">👤</span>
+            <span>Organizado por: {{ eventoSeleccionado.organizador.nombreOrganizador }}</span>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <p><strong>📝 Instrucciones:</strong></p>
+          <p>Al confirmar tu inscripción, recibirás un correo de confirmación con todos los detalles del evento. Por favor, asegúrate de llegar puntualmente al lugar indicado.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button
+        class="btn btn-secondary"
+        type="button"
+        (click)="cerrarModalInscripcion()"
+        [disabled]="inscripcionEnProceso">
+        Cancelar
+      </button>
+      <button
+        class="btn btn-primary"
+        type="button"
+        (click)="confirmarInscripcion()"
+        [disabled]="inscripcionEnProceso">
+        {{ inscripcionEnProceso ? 'Inscribiendo...' : 'Confirmar Inscripción' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

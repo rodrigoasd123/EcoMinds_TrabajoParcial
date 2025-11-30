@@ -1,0 +1,76 @@
+<div class="recoleccion-container">
+  <div class="recoleccion-card">
+    <div class="recoleccion-illustration">
+      <div class="illustration-content">
+        <div class="eco-icon">♻️</div>
+        <h3>Registra tu Reciclaje</h3>
+        <p>Cada kilogramo cuenta para un planeta más limpio</p>
+      </div>
+    </div>
+
+    <div class="recoleccion-form-container">
+      <h2>Registrar Recolección de Residuos</h2>
+      <p>Completa los datos de tu material reciclado</p>
+
+      <form [formGroup]="recoleccionForm" (ngSubmit)="registrarRecoleccion()" class="recoleccion-form">
+        <div class="form-group">
+          <label for="idMaterial">Tipo de Material</label>
+          <select id="idMaterial"
+                  formControlName="idMaterial"
+                  class="form-input"
+                  required>
+            <option value="">Selecciona el tipo de material</option>
+            <option *ngFor="let material of materiales" [value]="material.idMateriales">
+              {{ material.nombre }}
+            </option>
+          </select>
+          <div class="error-message" *ngIf="recoleccionForm.get('idMaterial')?.invalid && recoleccionForm.get('idMaterial')?.touched">
+            <span *ngIf="recoleccionForm.get('idMaterial')?.hasError('required')">Selecciona un tipo de material</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="idPunto">Punto de Acopio</label>
+          <select id="idPunto"
+                  formControlName="idPunto"
+                  class="form-input"
+                  required>
+            <option value="">Selecciona un punto de acopio</option>
+            <option *ngFor="let punto of puntosAcopio" [value]="punto.idAcopio">
+              {{ punto.nombre }} - {{ punto.ubicacion }}
+            </option>
+          </select>
+          <div class="error-message" *ngIf="recoleccionForm.get('idPunto')?.invalid && recoleccionForm.get('idPunto')?.touched">
+            <span *ngIf="recoleccionForm.get('idPunto')?.hasError('required')">Selecciona un punto de acopio</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="peso">Peso (kg)</label>
+          <input type="number"
+                 id="peso"
+                 formControlName="peso"
+                 class="form-input"
+                 placeholder="Ejemplo: 2.5"
+                 step="0.1"
+                 min="0.1"
+                 required>
+          <div class="error-message" *ngIf="recoleccionForm.get('peso')?.invalid && recoleccionForm.get('peso')?.touched">
+            <span *ngIf="recoleccionForm.get('peso')?.hasError('required')">Ingresa el peso del material</span>
+            <span *ngIf="recoleccionForm.get('peso')?.hasError('min')">El peso debe ser mayor a 0</span>
+          </div>
+          <small class="form-hint">Ganarás 1 punto por cada kilogramo reciclado</small>
+        </div>
+
+        <div class="button-group">
+          <button type="button" (click)="cancelar()" class="btn btn-secondary" [disabled]="loading">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="loading || recoleccionForm.invalid" class="btn btn-primary">
+            {{ loading ? 'Registrando...' : 'Registrar Recolección' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
