@@ -67,8 +67,9 @@ public class AuthController {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Authorization", token);
         AuthResponseDTO authResponseDTO = new AuthResponseDTO();
-        authResponseDTO.setRoles(roles);
         authResponseDTO.setJwt(token);
+        authResponseDTO.setUsername(authRequest.getUsername());
+        authResponseDTO.setRoles(roles);
         return ResponseEntity.ok().headers(responseHeaders).body(authResponseDTO);
     }
 

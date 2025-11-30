@@ -46,7 +46,7 @@ public class EventoController {
         try {
             List<Evento> eventos = eventoRepository.findAllByOrderByFechaAscHoraAsc();
 
-            
+            // Convertir eventos a formato limpio sin problemas de serialización
             List<Map<String, Object>> eventosData = eventos.stream().map(evento -> {
                 Map<String, Object> eventoData = new HashMap<>();
                 eventoData.put("id", evento.getIdEvento());
@@ -56,13 +56,14 @@ public class EventoController {
                 eventoData.put("lugar", evento.getLugar());
                 eventoData.put("descripcion", evento.getDescripcion());
 
-                // Manejar organizador de forma segura
+                // Manejar organizador de forma segura - enviar como objeto
                 if (evento.getOrganizador() != null) {
-                    eventoData.put("organizador", evento.getOrganizador().getNombre());
-                    eventoData.put("organizadorId", evento.getOrganizador().getId());
+                    Map<String, Object> organizadorData = new HashMap<>();
+                    organizadorData.put("idOrganizador", evento.getOrganizador().getId());
+                    organizadorData.put("nombreOrganizador", evento.getOrganizador().getNombre());
+                    eventoData.put("organizador", organizadorData);
                 } else {
-                    eventoData.put("organizador", "Sin organizador");
-                    eventoData.put("organizadorId", null);
+                    eventoData.put("organizador", null);
                 }
 
                 return eventoData;
@@ -227,8 +228,15 @@ public class EventoController {
             eventoData.put("hora", eventoActualizado.getHora().toString());
             eventoData.put("lugar", eventoActualizado.getLugar());
             eventoData.put("descripcion", eventoActualizado.getDescripcion());
-            eventoData.put("organizador", eventoActualizado.getOrganizador().getNombre());
-            eventoData.put("organizadorId", eventoActualizado.getOrganizador().getId());
+
+            if (eventoActualizado.getOrganizador() != null) {
+                Map<String, Object> organizadorData = new HashMap<>();
+                organizadorData.put("idOrganizador", eventoActualizado.getOrganizador().getId());
+                organizadorData.put("nombreOrganizador", eventoActualizado.getOrganizador().getNombre());
+                eventoData.put("organizador", organizadorData);
+            } else {
+                eventoData.put("organizador", null);
+            }
 
             response.put("success", true);
             response.put("message", "Evento actualizado exitosamente");
@@ -242,7 +250,7 @@ public class EventoController {
         }
     }
 
-    // US-011: Eliminar evento
+    // US-011: Eliminar evento (ORGANIZADOR propietario)
     @DeleteMapping("/evento/{id}")
     @PreAuthorize("hasRole('ORGANIZADOR')")
     public ResponseEntity<Map<String, String>> eliminarEvento(@PathVariable Long id) {
@@ -252,9 +260,9 @@ public class EventoController {
             Optional<Evento> optionalEvento = eventoRepository.findById(id);
             if (optionalEvento.isPresent()) {
                 Evento evento = optionalEvento.get();
-
+                // Primero eliminar inscripciones
                 usuarioEventoRepository.deleteByEvento(evento);
-                //  eliminar evento
+                // Luego eliminar evento
                 eventoRepository.deleteById(id);
                 response.put("success", "true");
                 response.put("message", "Evento eliminado exitosamente");
@@ -271,12 +279,49 @@ public class EventoController {
         }
     }
 
-    // Buscar evento por ID
+    // Buscar evento por ID (acceso público para edición de organizadores)
     @GetMapping("/evento/{id}")
-    public ResponseEntity<Evento> buscarEvento(@PathVariable Long id) {
-        return eventoRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'ORGANIZADOR')")
+    public ResponseEntity<Map<String, Object>> buscarEvento(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Optional<Evento> optionalEvento = eventoRepository.findById(id);
+            if (optionalEvento.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Evento no encontrado");
+                return ResponseEntity.status(404).body(response);
+            }
+
+            Evento evento = optionalEvento.get();
+
+            // Crear respuesta con datos limpios del evento
+            Map<String, Object> eventoData = new HashMap<>();
+            eventoData.put("idEvento", evento.getIdEvento());
+            eventoData.put("nombre", evento.getNombre());
+            eventoData.put("fecha", evento.getFecha().toString());
+            eventoData.put("hora", evento.getHora().toString());
+            eventoData.put("lugar", evento.getLugar());
+            eventoData.put("descripcion", evento.getDescripcion());
+
+            if (evento.getOrganizador() != null) {
+                Map<String, Object> organizadorData = new HashMap<>();
+                organizadorData.put("idOrganizador", evento.getOrganizador().getId());
+                organizadorData.put("nombreOrganizador", evento.getOrganizador().getNombre());
+                eventoData.put("organizador", organizadorData);
+            } else {
+                eventoData.put("organizador", null);
+            }
+
+            response.put("success", true);
+            response.put("evento", eventoData);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Error al obtener evento: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
     }
 
     // Ver mis inscripciones (USER)

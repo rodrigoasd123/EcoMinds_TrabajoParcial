@@ -17,9 +17,9 @@ public class Recompensa {
     @Column(nullable = false)
     private String descripcion;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String requisito;
-    
+
     @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
     private Integer puntosRequeridos = 0;
 

@@ -15,5 +15,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class AuthResponseDTO {
     private String jwt;
+    private String username;
     private Set<String> roles;
 }
